@@ -18,7 +18,6 @@ const checkAuth = async (req, res, next) => {
             next();
         }
         else {
-            console.log(err)
             return res.status(401).send();
         
         }
