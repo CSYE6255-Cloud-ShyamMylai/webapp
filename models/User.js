@@ -28,7 +28,7 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
         validate:{
-            is:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}/i,
+            is:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}/,
             
         }
     },
