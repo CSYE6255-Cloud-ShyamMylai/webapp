@@ -27,15 +27,16 @@ app.get('/self', [dbCheck,checkAuth], async (req, res) => {
 app.put('/self',[dbCheck,checkAuth], async (req, res) => {
     const { password, first_name, last_name, username,...anythingelse } = req.body;
 
-    if (username!=undefined || !password || !first_name || !last_name || Object.keys(req.query).length != 0 ||Object.keys(anythingelse).length!=0) {
+    if (username!=undefined ||( !password && !first_name && !last_name) || Object.keys(req.query).length != 0 ||Object.keys(anythingelse).length!=0) {
         return res.status(400).send();
     }
     try {
-        const userForUpdateion = await User.findOne({where:{username:req.username}})
-        await userForUpdateion.update({
-                first_name: first_name,
-                last_name: last_name,
-                password: password
+        const userForUpdation = await User.findOne({where:{username:req.username}})
+        // reason for findOne is because on doing update with the where clause it runs builkUpdate hook which isn't required
+        await userForUpdation.update({
+                first_name: first_name?first_name:userForUpdation.first_name,
+                last_name: last_name?last_name:userForUpdation.last_name,
+                password: password?password:userForUpdation.password
             })
         return res.status(204).send();
 
@@ -54,6 +55,9 @@ app.post('/', dbCheck,async (req, res) => {
     else {
         const { first_name, last_name, username, password,...anythingelse} = req.body;
         switch (true) {
+            case !first_name && !last_name && !username && !password:
+                res.status(400).send({ message: "All fields required are missing in the body" });
+                break;
             case !first_name:
                 res.status(400).send({ message: "First name is missing in the body" });
                 break;
@@ -71,7 +75,7 @@ app.post('/', dbCheck,async (req, res) => {
             default:
                 try {
                     const emailCheck = await User.count({where:{username:username}});
-                    if(emailCheck>0) return res.status(403).send();
+                    if(emailCheck>0) return res.status(400).send({message:"Username already exists"});
                     await User.create({
                         first_name: first_name,
                         last_name: last_name,

@@ -48,13 +48,11 @@ const User = sequelize.define('User', {
     })
 
 User.beforeCreate(async (user,options) =>{
-    console.log("Before Create HOOK")
     const hashedPassword = await bcrypt.hash(user.password,10);
     user.password = hashedPassword
 })
 
 User.beforeUpdate(async (user,options) =>{
-    console.log('before Update')
     options.validate=false;
     const hashedPassword = await bcrypt.hash(user.password,10);
     user.password = hashedPassword
