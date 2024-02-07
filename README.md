@@ -5,5 +5,4 @@
  - Unzip the package and run `npm install`
  - copy the **.env** file which has the credentials 
  - run `node server.js`
- - Run all the tests ( different request methods, end points,payloads, body and  kill the sql service) 
-  
+ - Run all the tests using postman
