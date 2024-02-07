@@ -6,10 +6,12 @@ const dbCheck = require('../middlewares/dbCheck.js');
 const checkAuth = require('../middlewares/Authenticator.js')
 
 
-app.get('/self', [dbCheck,checkAuth], async (req, res) => {
+app.get('/self', [(req,res,next)=>{
     if (Object.keys(req.query).length !=0  || req._body == true || req.get('Content-length') != undefined) {
         return res.status(400).send();
     }
+    next();
+},dbCheck,checkAuth], async (req, res) => {
     try{
         const response = await User.findOne({
             attributes: ['first_name', 'last_name', 'username', 'id', 'account_created', 'account_updated'],
@@ -24,12 +26,15 @@ app.get('/self', [dbCheck,checkAuth], async (req, res) => {
     }
 })
 
-app.put('/self',[dbCheck,checkAuth], async (req, res) => {
+app.put('/self',[(req,res,next)=>{
+    //inline check for the body before dbCheck and authCheck 
     const { password, first_name, last_name, username,...anythingelse } = req.body;
-
     if (username!=undefined ||( !password && !first_name && !last_name) || Object.keys(req.query).length != 0 ||Object.keys(anythingelse).length!=0) {
         return res.status(400).send();
     }
+    next();
+},dbCheck,checkAuth], async (req, res) => {
+
     try {
         const userForUpdation = await User.findOne({where:{username:req.username}})
         // reason for findOne is because on doing update with the where clause it runs builkUpdate hook which isn't required
@@ -48,11 +53,13 @@ app.put('/self',[dbCheck,checkAuth], async (req, res) => {
 
 })
 
-app.post('/', dbCheck,async (req, res) => {
-    if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0) {
-        return res.status(400).send();
-    }
-    else {
+app.post('/', [
+    (req, res, next) => {
+        if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0) {
+            return res.status(400).send();
+        }
+        next();
+    }, (req,res,next) =>{
         const { first_name, last_name, username, password,...anythingelse} = req.body;
         switch (true) {
             case !first_name && !last_name && !username && !password:
@@ -73,6 +80,9 @@ app.post('/', dbCheck,async (req, res) => {
             case Object.keys(anythingelse).length!=0:
                 res.status(400).send({message: "Other properties shouldn't be present"})
             default:
+                next();
+        }
+    },dbCheck],async (req, res) => {
                 try {
                     const emailCheck = await User.count({where:{username:username}});
                     if(emailCheck>0) return res.status(400).send({message:"Username already exists"});
@@ -89,8 +99,8 @@ app.post('/', dbCheck,async (req, res) => {
                         message: err.message,
                     });
                 }
-        }
-    }
+        // }
+    // }
 });
 
 app.use((req, res) => {
