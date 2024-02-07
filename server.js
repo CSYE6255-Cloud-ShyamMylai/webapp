@@ -21,11 +21,15 @@ const sequelize = new Sequelize(config.development.database, config.development.
 // Start the server
 app.listen(port, async() => {
     console.log(`Server running on port ${port}`);
-    sequelize.authenticate()
-    .then(() =>console.log(`Connection Established`))
-    .then(User.sync())
-    .then(()=>console.log('Database Tables reset'))
-    .catch(err => console.log(err.message))
+    try{
+        await sequelize.authenticate();
+        console.log('Connection Established');
+        await User.sync();
+        console.log('Database Synced');
+    }
+    catch(err){
+        console.log(err);
+    }
 });
 // used to parse json from body if the request has body we need this 
 app.use(express.json());
