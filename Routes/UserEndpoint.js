@@ -19,6 +19,8 @@ app.get('/self', [(req, res, next) => {
                 username: req.username
             }
         })
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Accept', 'application/json');
         return res.status(200).send(response);
     }
     catch (err) {
@@ -94,14 +96,22 @@ app.post('/', [
             const { first_name, last_name, username, password, ...anythingelse } = req.body;
             const emailCheck = await User.count({ where: { username: username } });
             if (emailCheck > 0) return res.status(400).send({ message: "Username already exists" });
-            await User.create({
+            const creationResponse = await User.create({
                 first_name: first_name,
                 last_name: last_name,
                 username: username,
                 password: password,
             });
-
-            return res.status(201).send();
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Accept', 'application/json');
+            return res.status(201).send({
+                id:creationResponse.id,
+                first_name: creationResponse.first_name,
+                last_name: creationResponse.last_name,
+                username:creationResponse.username,
+                account_created:creationResponse.account_created,
+                account_updated:creationResponse.account_updated,
+            });
         } catch (err) {
             return res.status(400).send({
                 message: err.message,
