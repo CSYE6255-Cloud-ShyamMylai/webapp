@@ -36,6 +36,7 @@ app.put('/self',[(req,res,next)=>{
 },dbCheck,checkAuth], async (req, res) => {
 
     try {
+        const { password, first_name, last_name, username,...anythingelse } = req.body;
         const userForUpdation = await User.findOne({where:{username:req.username}})
         // reason for findOne is because on doing update with the where clause it runs builkUpdate hook which isn't required
         await userForUpdation.update({
@@ -84,6 +85,7 @@ app.post('/', [
         }
     },dbCheck],async (req, res) => {
                 try {
+                    const { first_name, last_name, username, password,...anythingelse} = req.body;
                     const emailCheck = await User.count({where:{username:username}});
                     if(emailCheck>0) return res.status(400).send({message:"Username already exists"});
                     await User.create({
