@@ -1,14 +1,8 @@
 
 const { Sequelize, DataTypes, UUIDV1 } = require('sequelize');
-const config = require('../config.js');
 const bcrypt = require('bcrypt');
+const sequelize = require('../config/sequelize.js');
 
-const sequelize = new Sequelize(config.development.database, config.development.username, config.development.password, {
-    host: config.development.host,
-    dialect: config.development.dialect,
-    // logging : console.log // displaying the logs from sequlize 
-    logging: false // disable logging
-});
 const User = sequelize.define('User', {
     id: {
         type: DataTypes.UUID,

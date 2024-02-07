@@ -1,21 +1,14 @@
 const express = require('express');
-const { Sequelize } = require('sequelize');
-const config = require('../config.js');
-const app = express();
 
-const sequelize = new Sequelize(config.development.database, config.development.username, config.development.password, {
-    host: config.development.host,
-    dialect: config.development.dialect,
-    // logging : console.log // displaying the logs from sequlize 
-    logging: false // disable logging
-});
+const config = require('../config/config.js');
+const app = express();
+const sequelize = require('../config/sequelize.js');
 
 app.use((req, res) => {
     res.setHeader('Cache-Control', 'no-cache,no-store,must-revalidate');
     if (req.method != "GET") {
         return res.status(405).send();
     }
-    
     // ensuring that only '/healthz' get verified not '/healthz/*'
     else if(req.path !='/'){
         return res.status(404).send();
