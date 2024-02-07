@@ -1,0 +1,19 @@
+name: Test Workflow
+run-name: First Workflow to check package installation 
+on: 
+  pull_request :
+    types: 
+      - opened 
+    branches: 
+      - main
+jobs:
+  checks-compile-code-install-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21.3.0
+          
+      - run: npm ci 
+      - run: echo "Hello World"
