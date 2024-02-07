@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 0;
 const { Sequelize } = require('sequelize');
 const config = require('./config.js');
-const router = express.Router();
+const router = require('./Routes/index.js');
 
 // routes 
 const createUser = require('./Routes/UserEndpoint.js');
@@ -32,13 +32,4 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 
 
-app.use('/healthz',HealthCheck);
-app.use('/v1/user',createUser);
-
-app.use((req,res) => {
-    console.log(req.method,req.path)
-    // if(req.path!='/healthz'){
-        res.setHeader('Cache-Control', 'no-cache,no-store,must-revalidate');
-        return res.status(404).send();       
-    // }
-});
+app.use(router);
