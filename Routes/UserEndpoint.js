@@ -6,13 +6,13 @@ const dbCheck = require('../middlewares/dbCheck.js');
 const checkAuth = require('../middlewares/Authenticator.js')
 
 
-app.get('/self', [(req,res,next)=>{
-    if (Object.keys(req.query).length !=0  || req._body == true || req.get('Content-length') != undefined) {
+app.get('/self', [(req, res, next) => {
+    if (Object.keys(req.query).length != 0 || req._body == true || req.get('Content-length') != undefined) {
         return res.status(400).send();
     }
     next();
-},dbCheck,checkAuth], async (req, res) => {
-    try{
+}, dbCheck, checkAuth], async (req, res) => {
+    try {
         const response = await User.findOne({
             attributes: ['first_name', 'last_name', 'username', 'id', 'account_created', 'account_updated'],
             where: {
@@ -21,29 +21,29 @@ app.get('/self', [(req,res,next)=>{
         })
         return res.status(200).send(response);
     }
-    catch(err){
+    catch (err) {
         return res.send(400).send()
     }
 })
 
-app.put('/self',[(req,res,next)=>{
+app.put('/self', [(req, res, next) => {
     //inline check for the body before dbCheck and authCheck 
-    const { password, first_name, last_name, username,...anythingelse } = req.body;
-    if (username!=undefined ||( !password && !first_name && !last_name) || Object.keys(req.query).length != 0 ||Object.keys(anythingelse).length!=0) {
+    const { password, first_name, last_name, username, ...anythingelse } = req.body;
+    if (username != undefined || (!password && !first_name && !last_name) || Object.keys(req.query).length != 0 || Object.keys(anythingelse).length != 0) {
         return res.status(400).send();
     }
     next();
-},dbCheck,checkAuth], async (req, res) => {
+}, dbCheck, checkAuth], async (req, res) => {
 
     try {
-        const { password, first_name, last_name, username,...anythingelse } = req.body;
-        const userForUpdation = await User.findOne({where:{username:req.username}})
+        const { password, first_name, last_name, username, ...anythingelse } = req.body;
+        const userForUpdation = await User.findOne({ where: { username: req.username } })
         // reason for findOne is because on doing update with the where clause it runs builkUpdate hook which isn't required
         await userForUpdation.update({
-                first_name: first_name?first_name:userForUpdation.first_name,
-                last_name: last_name?last_name:userForUpdation.last_name,
-                password: password?password:userForUpdation.password
-            })
+            first_name: first_name ? first_name : userForUpdation.first_name,
+            last_name: last_name ? last_name : userForUpdation.last_name,
+            password: password ? password : userForUpdation.password
+        })
         return res.status(204).send();
 
     }
@@ -56,12 +56,13 @@ app.put('/self',[(req,res,next)=>{
 
 app.post('/', [
     (req, res, next) => {
-        if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0) {
+        if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0
+            || req.headers.authorization) {
             return res.status(400).send();
         }
         next();
-    }, (req,res,next) =>{
-        const { first_name, last_name, username, password,...anythingelse} = req.body;
+    }, (req, res, next) => {
+        const { first_name, last_name, username, password, ...anythingelse } = req.body;
         switch (true) {
             case !first_name && !last_name && !username && !password:
                 res.status(400).send({ message: "All fields required are missing in the body" });
@@ -78,39 +79,39 @@ app.post('/', [
             case !password:
                 res.status(400).send({ message: "Password is missing in the body" });
                 break;
-            case Object.keys(anythingelse).length!=0:
-                res.status(400).send({message: "Other properties shouldn't be present"})
+            case Object.keys(anythingelse).length != 0:
+                res.status(400).send({ message: "Other properties shouldn't be present" })
             default:
                 next();
         }
-    },dbCheck],async (req, res) => {
-                try {
-                    const { first_name, last_name, username, password,...anythingelse} = req.body;
-                    const emailCheck = await User.count({where:{username:username}});
-                    if(emailCheck>0) return res.status(400).send({message:"Username already exists"});
-                    await User.create({
-                        first_name: first_name,
-                        last_name: last_name,
-                        username: username,
-                        password: password,
-                    });
+    }, dbCheck], async (req, res) => {
+        try {
+            const { first_name, last_name, username, password, ...anythingelse } = req.body;
+            const emailCheck = await User.count({ where: { username: username } });
+            if (emailCheck > 0) return res.status(400).send({ message: "Username already exists" });
+            await User.create({
+                first_name: first_name,
+                last_name: last_name,
+                username: username,
+                password: password,
+            });
 
-                    return res.status(201).send();
-                } catch (err) {
-                    return res.status(400).send({
-                        message: err.message,
-                    });
-                }
+            return res.status(201).send();
+        } catch (err) {
+            return res.status(400).send({
+                message: err.message,
+            });
+        }
         // }
-    // }
-});
+        // }
+    });
 
 app.use((req, res) => {
-    const allMethods = ["GET",'PUT','POST']
-    if(allMethods.indexOf(req.method)==-1) return res.status(405).send();
+    const allMethods = ["GET", 'PUT', 'POST']
+    if (allMethods.indexOf(req.method) == -1) return res.status(405).send();
     if (req.path == '/' && req.method != 'POST') return res.status(405).send();
     if (req.path == '/self' && (['GET', 'PUT'].indexOf(req.method) == -1)) return res.status(405).send();
-    if(req.path.includes('/self') && ['GET','PUT'].indexOf(req.method)==-1 ) return res.status(405).send();
+    if (req.path.includes('/self') && ['GET', 'PUT'].indexOf(req.method) == -1) return res.status(405).send();
     return res.status(404).send()
 })
 
