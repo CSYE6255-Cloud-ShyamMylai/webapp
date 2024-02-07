@@ -14,6 +14,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 21.3.0
-          
-      - run: npm ci 
-      - run: echo "Hello World"
+      - name: Installing Dependancies
+        run: npm ci 
+      - name : Run npm build
+        run: npm run build 
