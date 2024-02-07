@@ -56,9 +56,14 @@ app.put('/self', [(req, res, next) => {
 
 app.post('/', [
     (req, res, next) => {
-        if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0
-            || req.headers.authorization) {
+        if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0) {
             return res.status(400).send();
+        }
+        if(req.headers.authorization != undefined){
+            const [username, password] = Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString().split(":");
+            if((username && username.length>0) ||( password &&  password.length>0)){
+                return res.status(400).send({message:"Authorization header is not required"});
+            }
         }
         next();
     }, (req, res, next) => {
