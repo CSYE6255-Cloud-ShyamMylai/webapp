@@ -19,7 +19,7 @@ app.get('/self', [(req, res, next) => {
                 username: req.username
             }
         })
-        res.setHeader('Content-Type', 'application/json');
+        // res.setHeader('Content-Type', 'application/json');
         res.setHeader('Accept', 'application/json');
         return res.status(200).send(response);
     }
@@ -102,7 +102,7 @@ app.post('/', [
                 username: username,
                 password: password,
             });
-            res.setHeader('Content-Type', 'application/json');
+            // res.setHeader('Content-Type', 'application/json');
             res.setHeader('Accept', 'application/json');
             return res.status(201).send({
                 id:creationResponse.id,
