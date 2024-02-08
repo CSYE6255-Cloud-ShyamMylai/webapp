@@ -7,7 +7,8 @@ const checkAuth = require('../middlewares/Authenticator.js')
 
 
 app.get('/self', [(req, res, next) => {
-    if (Object.keys(req.query).length != 0 || req._body == true || req.get('Content-length') != undefined) {
+    if (Object.keys(req.query).length != 0 || req._body == true || req.get('Content-length') != undefined ||
+    req.get('accept') != 'application/json' ){
         return res.status(400).send();
     }
     next();
@@ -31,7 +32,8 @@ app.get('/self', [(req, res, next) => {
 app.put('/self', [(req, res, next) => {
     //inline check for the body before dbCheck and authCheck 
     const { password, first_name, last_name, username, ...anythingelse } = req.body;
-    if (username != undefined || (!password && !first_name && !last_name) || Object.keys(req.query).length != 0 || Object.keys(anythingelse).length != 0) {
+    if (username != undefined || (!password && !first_name && !last_name) || Object.keys(req.query).length != 0 || Object.keys(anythingelse).length != 0 
+    || req.get('accept') != 'application/json' || req.get('content-type') != 'application/json'){
         return res.status(400).send();
     }
     next();
@@ -58,7 +60,8 @@ app.put('/self', [(req, res, next) => {
 
 app.post('/', [
     (req, res, next) => {
-        if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0) {
+        if (req._body == false || req.get('Content-length') == undefined || Object.keys(req.query).length != 0
+        || req.get('accept') != 'application/json' || req.get('content-type') != 'application/json') {
             return res.status(400).send();
         }
         if(req.headers.authorization != undefined){
