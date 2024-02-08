@@ -32,8 +32,7 @@ app.get('/self', [(req, res, next) => {
 app.put('/self', [(req, res, next) => {
     //inline check for the body before dbCheck and authCheck 
     const { password, first_name, last_name, username, ...anythingelse } = req.body;
-    if (username != undefined || (!password && !first_name && !last_name) || Object.keys(req.query).length != 0 || Object.keys(anythingelse).length != 0 
-    || req.get('accept') != 'application/json' || req.get('content-type') != 'application/json'){
+    if (username != undefined || (!password && !first_name && !last_name) || Object.keys(req.query).length != 0 || Object.keys(anythingelse).length != 0  || req.get('content-type') != 'application/json'){
         return res.status(400).send();
     }
     next();
