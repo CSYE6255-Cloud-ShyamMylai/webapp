@@ -6,3 +6,4 @@
  - copy the **.env** file which has the credentials 
  - run `node server.js`
  - Run all the tests using postman
+ - Making a change workflow test
