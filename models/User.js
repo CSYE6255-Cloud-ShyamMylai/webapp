@@ -48,8 +48,6 @@ User.beforeCreate(async (user,options) =>{
 
 User.beforeUpdate(async (user,options) =>{
     options.validate=false;
-    const hashedPassword = await bcrypt.hash(user.password,10);
-    user.password = hashedPassword
 })
 
 module.exports = User;
