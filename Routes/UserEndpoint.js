@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User.js');
 const app = express();
+const bcrypt = require('bcrypt');
 //middle ware 
 const dbCheck = require('../middlewares/dbCheck.js');
 const checkAuth = require('../middlewares/Authenticator.js')
@@ -40,18 +41,30 @@ app.put('/self', [(req, res, next) => {
 
     try {
         const { password, first_name, last_name, username, ...anythingelse } = req.body;
-        const userForUpdation = await User.findOne({ where: { username: req.username } })
-        // reason for findOne is because on doing update with the where clause it runs builkUpdate hook which isn't required
-        await userForUpdation.update({
-            first_name: first_name ? first_name : userForUpdation.first_name,
-            last_name: last_name ? last_name : userForUpdation.last_name,
-            password: password ? password : userForUpdation.password
-        })
+        const userForUpdation = await User.findOne({ where: { username: req.username } });
+        // const validCreds = await bcrypt.compare(password, userForUpdation.password);
+        if(password){
+            const hashedPassword = await bcrypt.hash(password,10);
+
+            await userForUpdation.update({
+                first_name: first_name ? first_name : userForUpdation.first_name,
+                last_name: last_name ? last_name : userForUpdation.last_name,
+                password: hashedPassword
+            });
+        }
+        else{
+            // reason for findOne is because on doing update with the where clause it runs builkUpdate hook which isn't required
+            await userForUpdation.update({
+                first_name: first_name ? first_name : userForUpdation.first_name,
+                last_name: last_name ? last_name : userForUpdation.last_name,
+                // password: password ? password : userForUpdation.password
+            });
+        }
         return res.status(204).send();
 
     }
     catch (err) {
-        // console.log(err);
+        console.log(err);
         return res.status(400).send();
     }
 
