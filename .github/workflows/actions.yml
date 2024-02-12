@@ -1,20 +1,37 @@
-name: Test Workflow
-run-name: First Workflow to check package installation 
+name: Workflow for Testing 
+run-name:  Workflow for various testcases 
+env: 
+  DB_USERNAME: ${{secrets.DB_USERNAME}}
+  DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+  PORT: 3500
 on: 
   pull_request :
     types: 
       - opened 
+      - reopened
     branches: 
       - main
 jobs:
   checks-compile-code-install-packages:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: ${{secrets.DB_PASSWORD}}
+          MYSQL_DATABASE: testDB
+        ports:
+            - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
+      - uses: actions/checkout@v1
+      - run: mysql -h 127.0.0.1 --port 3306 -u ${{secrets.DB_USERNAME}} -p${{secrets.DB_PASSWORD}} -e 'CREATE DATABASE IF NOT EXISTS testDB;'
+
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 21.3.0
       - name: Installing Dependancies
         run: npm ci 
-      - name : Run npm build
-        run: npm run build 
+      - name : Run test
+        run: npm test
