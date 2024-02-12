@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Checking sqlDB connection
-        run: mysql -h 127.0.0.1 --port 3306 -u ${{secrets.DB_USERNAME}} -p${{secrets.DB_PASSWORD}} '
+        run: mysql -h 127.0.0.1 --port 3306 -u ${{secrets.DB_USERNAME}} -p${{secrets.DB_PASSWORD}}
 
       - uses: actions/checkout@v4
       - name: Installing NodeJS
