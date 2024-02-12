@@ -3,7 +3,7 @@ run-name:  Workflow  with JEST & SUPERTEST
 env: 
   DB_USERNAME: ${{secrets.DB_USERNAME}}
   DB_PASSWORD: ${{secrets.DB_PASSWORD}}
-  PORT: ${{secrets.PORTNUMBER}}
+  PORT: 3500
 on: 
   pull_request :
     types: 
