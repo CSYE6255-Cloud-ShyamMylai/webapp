@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const dbCheck = require('../middlewares/dbCheck.js');
 const checkAuth = require('../middlewares/Authenticator.js')
 
-app.use(express.json())
+
 app.get('/self', [(req, res, next) => {
     if (Object.keys(req.query).length != 0 || req._body == true || req.get('Content-length') != undefined ||
     req.get('accept') != 'application/json' ){
