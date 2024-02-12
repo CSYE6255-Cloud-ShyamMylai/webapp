@@ -3,7 +3,8 @@ run-name: First Workflow to check package installation
 on: 
   pull_request :
     types: 
-      - opened 
+      - opened
+      - reopened 
     branches: 
       - main
 jobs:
