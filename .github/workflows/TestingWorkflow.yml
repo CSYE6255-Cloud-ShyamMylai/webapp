@@ -1,9 +1,9 @@
-name: Workflow for Testing 
-run-name:  Workflow for various testcases 
+name: Workflow for NPM Tests 
+run-name:  Workflow  with JEST & SUPERTEST 
 env: 
   DB_USERNAME: ${{secrets.DB_USERNAME}}
   DB_PASSWORD: ${{secrets.DB_PASSWORD}}
-  PORT: 3500
+  PORT: ${{secrets.PORTNUMBER}}
 on: 
   pull_request :
     types: 
@@ -25,10 +25,12 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - uses: actions/checkout@v1
-      - run: mysql -h 127.0.0.1 --port 3306 -u ${{secrets.DB_USERNAME}} -p${{secrets.DB_PASSWORD}} -e 'CREATE DATABASE IF NOT EXISTS testDB;'
+      - name: Checking sqlDB connection
+        run: mysql -h 127.0.0.1 --port 3306 -u ${{secrets.DB_USERNAME}} -p${{secrets.DB_PASSWORD}} '
 
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Installing NodeJS
+        uses: actions/setup-node@v4
         with:
           node-version: 21.3.0
       - name: Installing Dependancies
