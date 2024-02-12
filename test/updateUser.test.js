@@ -2,6 +2,9 @@ const request = require("supertest");
 const app = require('../Routes/index.js');
 const {get,put} = require("superagent");
 const [globalUserCredentials,newpassword] = require('../config/testCredentials.js');
+const sequelize = require('../config/sequelize.js');
+// Model and MySql config
+const User = require('../models/User.js');
 describe("Updating a user and get the user details to cross verify if it is the same user",()=>{
     test("Updating a user's last name and then get the credentials",async ()=>{
         // console.log(globalUserCredentials)
@@ -46,3 +49,8 @@ describe("Updating a user and get the user details to cross verify if it is the 
         expect(getResponse.statusCode).toBe(200);
     })
 })
+
+afterAll(async()=>{
+    await sequelize.close();
+});
+    
