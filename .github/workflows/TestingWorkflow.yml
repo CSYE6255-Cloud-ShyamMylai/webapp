@@ -12,7 +12,7 @@ on:
     branches: 
       - main
 jobs:
-  checks-compile-code-install-packages:
+  install-packages-and-npm-test:
     runs-on: ubuntu-latest
     services:
       mysql:
