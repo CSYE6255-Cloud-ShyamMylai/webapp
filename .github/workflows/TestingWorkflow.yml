@@ -14,16 +14,21 @@ on:
 jobs:
   install-packages-and-npm-test:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: ${{secrets.DB_PASSWORD}}
-          MYSQL_DATABASE: ${{secrets.DB_NAME}}
-        ports:
-            - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    # services:
+    #   mysql:
+    #     image: mysql:8.0
+    #     env:
+    #       MYSQL_ROOT_PASSWORD: ${{secrets.DB_PASSWORD}}
+    #       MYSQL_DATABASE: ${{secrets.DB_NAME}}
+    #     ports:
+    #         - 3306:3306
+    #     options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
+      - name: Setup SQL 
+        run:  |
+          sudo service mysql start
+          mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_DATABASE }};" -u${{ env.DB_USERNAME }} -p${{ env.DB_PASSWORD }}
+          
       - uses: actions/checkout@v1
       - name: Checking sqlDB connection
         run: mysql -h 127.0.0.1 --port 3306 -u ${{secrets.DB_USERNAME}} -p${{secrets.DB_PASSWORD}}
