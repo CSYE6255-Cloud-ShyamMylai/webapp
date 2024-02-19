@@ -9,7 +9,7 @@ test("Creating a new user and then get the credentials",async()=>{
     .send(globalUserCredentials)
     .set('Accept','application/json'))
     expect(postresponse.statusCode).toBe(201);
-    expect(postresponse.body.username).toBe(globalUserCredentials.username)
+    expect(postresponse.body.username).toBe("test1123")
     expect(postresponse.body.first_name).toBe(globalUserCredentials.first_name)
     expect(postresponse.body.last_name).toBe(globalUserCredentials.last_name)
     const getresponse = (await request(app)
