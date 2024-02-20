@@ -6,7 +6,7 @@ sudo dnf install unzip -y
 cd /tmp || exit
 sudo mv /tmp/webapp-main.zip /tmp/webapp.zip
 # sudo mkdir -p /opt/webapp
-sudo unzip -o webapp.zip -d /opt/
+sudo unzip -o webapp.zip -d /opt/webapp-main
 # sudo unzip -o webapp.zip -d ~/
 
 #renaming the folder to avoid confusion
