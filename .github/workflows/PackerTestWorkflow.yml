@@ -1,0 +1,26 @@
+name: Tester for Packer
+run-name: initalize packer and applying infra
+on: 
+    pull_request :
+      types: 
+        - opened 
+        - reopened
+      branches: 
+        - main
+jobs:
+    intialize-packer-and-deploy:
+        runs-on: ubuntu-latest
+        steps:
+         - uses: actions/checkout@v4
+         - uses: hashicorp/setup-packer@main
+           with:
+            version: 1.7.3
+         
+         - name: packer downloading the binaries for the required provided 
+           run:  packer init packer/templates/packer.pkr.hcl 
+
+         - name: packer build to create the image
+           run: packer build packer/templates/packer.pkr.hcl
+
+         - name: Status check to validate packer validate 
+           run: packer validate   packer/templates/packer.pkr.hcl
