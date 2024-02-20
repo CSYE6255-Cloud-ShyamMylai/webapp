@@ -133,6 +133,8 @@ dist
 #For Mac ignoring .DS_STORE 
 .DS_STORE
 
+#ignore google auth file
+google_auth_creds.json 
 
 #remove temporary zip
 *.zip
