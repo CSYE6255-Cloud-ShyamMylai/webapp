@@ -15,7 +15,10 @@ jobs:
          - uses: hashicorp/setup-packer@main
            with:
             version: 1.7.3
-         
+
+         - name : creating temp zip for packer
+           run: zip -r webapp-main.zip ./*
+
          - name: packer downloading the binaries for the required provided 
            run:  packer init packer/templates/packer.pkr.hcl 
 
@@ -24,3 +27,6 @@ jobs:
 
          - name: Status check to validate packer validate 
            run: packer validate   packer/templates/packer.pkr.hcl
+        
+         - name: Remove created zip 
+           run: rm -rf webapp-main.zip
