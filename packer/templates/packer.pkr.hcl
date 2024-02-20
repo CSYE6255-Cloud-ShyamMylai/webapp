@@ -60,10 +60,10 @@ build {
   sources = ["source.googlecompute.machineimage"]
   provisioner "shell" {
     scripts = [
-      "./packer/scripts/installnodejs.sh",
-      "./packer/scripts/installmysql.sh",
-      "./packer/scripts/installfirewall.sh",
-      "./packer/scripts/createCSYE.sh",
+      "packer/scripts/installnodejs.sh",
+      "packer/scripts/installmysql.sh",
+      "packer/scripts/installfirewall.sh",
+      "packer/scripts/createCSYE.sh",
     ]
     environment_vars = [
       "DB_PASSWORD=${var.DB_PASSWORD}",
@@ -81,9 +81,9 @@ build {
   }
 
   provisioner "shell" {
-    scripts = ["./packer/scripts/projectinstall.sh",
-      "./packer/scripts/createCSYEService.sh",
-    "./packer/scripts/startCSYEService.sh", ]
+    scripts = ["packer/scripts/projectinstall.sh",
+      "packer/scripts/createCSYEService.sh",
+    "packer/scripts/startCSYEService.sh", ]
 
     environment_vars = [
       "PORT=${var.NODE_PORT}",

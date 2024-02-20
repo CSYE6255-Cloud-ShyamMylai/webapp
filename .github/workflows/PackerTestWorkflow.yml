@@ -24,6 +24,6 @@ jobs:
 
          - name: Status check to validate packer validate 
            run: packer validate   packer/templates/packer.pkr.hcl
+        #    run: rm -rf webapp-main.zip
         
-         - name: Remove created zip 
-           run: rm -rf webapp-main.zip
+        #  - name: Remove created zip 
