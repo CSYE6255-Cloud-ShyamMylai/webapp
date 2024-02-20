@@ -132,3 +132,10 @@ dist
 
 #For Mac ignoring .DS_STORE 
 .DS_STORE
+
+
+#remove temporary zip
+*.zip
+
+#remove packer vars 
+*.pkrvars.hcl
