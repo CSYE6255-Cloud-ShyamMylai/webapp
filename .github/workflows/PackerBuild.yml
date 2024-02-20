@@ -1,0 +1,42 @@
+name: Workflow for Building Packers and tests 
+run-name:  NPM Test job and packer build 
+env: 
+  DB_USERNAME: ${{secrets.DB_USERNAME}}
+  DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+  DB_HOST : ${{secrets.DB_HOST}}
+  PORT: ${{secrets.NODE_PORT}}
+
+on: 
+  pull_request :
+    types: 
+      - closed
+    branches: 
+      - main
+jobs:
+  install-packages-and-npm-test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+        - name: echoing 
+          run: echo "Hello World"
+  packer-build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+        - name: echoing 
+          run: echo "Hello World for packer build"
+    # steps:
+    #   - name: Setup SQL 
+    #     run:  |
+    #       sudo service mysql start
+    #       mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};" -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }}
+
+    #   - uses: actions/checkout@v4
+    #   - name: Installing NodeJS
+    #     uses: actions/setup-node@v4
+    #     with:
+    #       node-version: 21.3.0
+    #   - name: Installing Dependancies
+    #     run: npm ci 
+    #   - name : Run test
+    #     run: npm test
