@@ -1,5 +1,5 @@
 #!/bin/bash
-# sudo dnf update -y
+sudo dnf update -y
 sudo dnf install mysql-server -y
 
 # Check the exit status of the last command
