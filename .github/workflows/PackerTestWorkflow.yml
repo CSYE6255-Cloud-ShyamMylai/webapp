@@ -14,16 +14,13 @@ jobs:
          - uses: actions/checkout@v4
          - uses: hashicorp/setup-packer@main
            with:
-            version: 1.7.3
+            version: 1.10.1
 
          - name : creating temp zip for packer
            run: zip -r webapp-main.zip ./*
 
          - name: packer downloading the binaries for the required provided 
            run:  packer init packer/templates/packer.pkr.hcl 
-
-         - name: packer build to create the image
-           run: packer build packer/templates/packer.pkr.hcl
 
          - name: Status check to validate packer validate 
            run: packer validate   packer/templates/packer.pkr.hcl
