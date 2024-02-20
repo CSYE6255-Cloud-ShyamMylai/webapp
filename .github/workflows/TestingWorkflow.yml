@@ -4,7 +4,7 @@ env:
   DB_USERNAME: ${{secrets.DB_USERNAME}}
   DB_PASSWORD: ${{secrets.DB_PASSWORD}}
   HOST : ${{secrets.DB_HOST}}
-  # PORT: 3500
+  PORT: ${{secrets.NODE_PORT}}
 on: 
   pull_request :
     types: 
