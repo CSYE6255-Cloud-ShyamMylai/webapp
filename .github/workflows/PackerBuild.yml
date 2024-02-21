@@ -9,6 +9,12 @@ env:
   DB_NAME: ${{secrets.DB_NAME}}
   # GOOGLE_AUTH_SERVICE: ${{secrets.AUTH_CREDS}} # GOOGLE AUTH SERVICE credentials
   DB_DATABASE: ${{secrets.DB_DATABASE}}
+  GOOGLE_PROJECT_ID: ${{secrets.GOOGLE_PROJECT_ID}}
+  SOURCE_IMAGE_FAMILY: ${{secrets.SOURCE_IMAGE_FAMILY}}
+  IMAGE_ZONE: ${{secrets.IMAGE_ZONE}}
+  IMAGE_FAMILY: ${{secrets.IMAGE_FAMILY}}
+  IMAGE_STORAGE_LOCATIONS: ${{secrets.IMAGE_STORAGE_LOCATIONS}}
+  DISK_TYPE: ${{secrets.DISK_TYPE}}
 on: 
   pull_request :
     types: 

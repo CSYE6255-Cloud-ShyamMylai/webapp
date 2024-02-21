@@ -34,9 +34,21 @@ variable "AUTH_CREDS" {
 }
 
 variable "machine_image_details" {
-  type = map(string)
-  default = {
-    project_id              = "csye6255-cloudcomp-packer-dev"
+  type = object({
+    project_id              = string
+    source_image_family     = string
+    zone                    = string
+    image_name              = string
+    image_family            = string
+    image_storage_locations = string
+    image_description       = string
+    communicator            = string
+    ssh_username            = string
+    disk_type               = string
+  })
+
+  /*
+      project_id              = env("GOOGLE_PROJECT_ID")
     source_image_family     = "centos-stream-8"
     zone                    = "us-east1-b"
     image_name              = "csye6255packer-dev-{{timestamp}}"
@@ -45,7 +57,18 @@ variable "machine_image_details" {
     image_description       = "This is a custom image for CSYE6255 Cloud Computing"
     communicator            = "ssh"
     ssh_username            = "centos-communicator"
-    disk_type               = "pd-standard"
+    disk_type               = "pd-standard"*/
+  default = {
+    project_id              = env("GOOGLE_PROJECT_ID")
+    source_image_family     = env("SOURCE_IMAGE_FAMILY")
+    zone                    = env("IMAGE_ZONE")
+    image_name              = env("IMAGE_NAME")
+    image_family            = env("IMAGE_FAMILY")
+    image_storage_locations = env("IMAGE_STORAGE_LOCATIONS")
+    image_description       = "This is a custom image for CSYE6255 Cloud Computing"
+    communicator            = "ssh"
+    ssh_username            = "centos-communicator"
+    disk_type               = env("DISK_TYPE")
   }
 }
 
