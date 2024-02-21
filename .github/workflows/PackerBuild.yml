@@ -16,7 +16,7 @@ on:
     branches: 
       - main
 jobs:
-  install-packages-and-npm-test:
+  npm-test-and-packer-build:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -34,29 +34,23 @@ jobs:
         run: npm ci 
       - name : Run test
         run: npm test
-  packer-build:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        
-        - name: Install Packer
-          uses: hashicorp/setup-packer@main
-          with:
-            version: 1.10.1
+      
+      - name: Install Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: 1.10.1
 
-        - name: Setting up zip for the packer 
-          run: zip -r webapp-main.zip ./*
-        
-        - name: packer downloading the binaries for the required provided 
-          run:  packer init packer/templates/packer.pkr.hcl 
- 
-        - name: Status check to validate packer validate 
-          run:  packer validate  packer/templates/packer.pkr.hcl
+      - name: Setting up zip for the packer 
+        run: zip -r webapp-main.zip ./*
+      
+      - name: packer downloading the binaries for the required provided 
+        run:  packer init packer/templates/packer.pkr.hcl 
 
-        - name: Build the packer image
-          run: packer build packer/templates/packer.pkr.hcl
-        
-        - name: remove the zip file 
-          run: rm -rf webapp-main.zip
+      - name: Status check to validate packer validate 
+        run:  packer validate  packer/templates/packer.pkr.hcl
+
+      - name: Build the packer image
+        run: packer build packer/templates/packer.pkr.hcl
+      
+      - name: remove the zip file 
+        run: rm -rf webapp-main.zip
