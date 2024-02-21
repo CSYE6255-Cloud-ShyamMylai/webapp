@@ -15,6 +15,7 @@ env:
   IMAGE_FAMILY: ${{secrets.IMAGE_FAMILY}}
   IMAGE_STORAGE_LOCATIONS: ${{secrets.IMAGE_STORAGE_LOCATIONS}}
   DISK_TYPE: ${{secrets.DISK_TYPE}}
+  IMAGE_NAME: ${{secrets.IMAGE_NAME}}
 on: 
   pull_request :
     types: 
