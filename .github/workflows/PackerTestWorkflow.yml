@@ -17,13 +17,8 @@ jobs:
             version: 1.10.1
 
          - name : creating temp zip for packer
-           run: zip -r webapp-main.zip ../*
+           run: zip -r webapp-main.zip ./*
         
-         - name: extracting zip
-           run: unzip -o  webapp-main.zip -d ./
-        
-         - name: listing the files
-           run: ls -l
 
          - name: packer downloading the binaries for the required provided 
            run:  packer init packer/templates/packer.pkr.hcl 
