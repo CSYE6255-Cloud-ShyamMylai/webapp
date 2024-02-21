@@ -1,36 +1,62 @@
-variable "DB_USERNAME"{
-    type=string
-    description = "The username for the database"
-    default = env("DB_USERNAME")
+variable "DB_USERNAME" {
+  type        = string
+  description = "The username for the database"
+  default     = env("DB_USERNAME")
 }
 
-variable "DB_PASSWORD"{
-    type=string
-    description = "The password for the database"
-    default = env("DB_PASSWORD")
+variable "DB_PASSWORD" {
+  type        = string
+  description = "The password for the database"
+  default     = env("DB_PASSWORD")
 }
 
-variable "DB_DATABASE"{
-    type=string
-    description = "The name of the database"
-    default = env("DB_DATABASE")
+variable "DB_DATABASE" {
+  type        = string
+  description = "The name of the database"
+  default     = env("DB_DATABASE")
 }
 
-variable "NODE_PORT"{
-    type=string
-    description = "The port for the database"
-    default = env("NODE_PORT")
+variable "NODE_PORT" {
+  type        = string
+  description = "The port for the database"
+  default     = env("NODE_PORT")
 }
 
-variable "DB_HOST"{
-    type=string
-    description = "The host for the database"
-    default = env("DB_HOST")
+variable "DB_HOST" {
+  type        = string
+  description = "The host for the database"
+  default     = env("DB_HOST")
 }
-variable "AUTH_CREDS"{
-    type=string 
-    description = "The JSON credentials for the service account"
-    default = env("GOOGLE_AUTH_SERVICE")
+variable "AUTH_CREDS" {
+  type        = string
+  description = "The JSON credentials for the service account"
+  default     = env("GOOGLE_AUTH_SERVICE")
+}
+
+variable "machine_image_details" {
+  type = map(string)
+  default = {
+    project_id              = "csye6255-cloudcomp-packer-dev"
+    source_image_family     = "centos-stream-8"
+    zone                    = "us-east1-b"
+    image_name              = "csye6255packer-dev-{{timestamp}}"
+    image_family            = "csye6255packer-dev"
+    image_storage_locations = "us-east1"
+    image_description       = "This is a custom image for CSYE6255 Cloud Computing"
+    communicator            = "ssh"
+    ssh_username            = "centos-communicator"
+    disk_type               = "pd-standard"
+  }
+}
+
+variable "webapp_source" {
+  type = string
+  default = "./webapp-main.zip"
+}
+
+variable "webapp_destination" {
+  type = string
+  default = "/tmp/webapp-main.zip"
 }
 packer {
   required_plugins {
@@ -42,17 +68,17 @@ packer {
 }
 
 source "googlecompute" "machineimage" {
-  project_id              = "csye6255-cloudcomp-packer-dev"
-  source_image_family     = "centos-stream-8"
+  project_id              = var.machine_image_details["project_id"]
+  source_image_family     = var.machine_image_details["source_image_family"]
   credentials_json        = "${var.AUTH_CREDS}"
-  zone                    = "us-east1-b"
-  image_name              = "csye6255packer-dev-{{timestamp}}"
-  image_family            = "csye6255packer-dev"
-  image_storage_locations = ["us-east1"]
-  image_description       = "This is a custom image for CSYE6255 Cloud Computing"
-  communicator            = "ssh"
-  ssh_username            = "centos-communicator"
-  disk_type               = "pd-standard"
+  zone                    = var.machine_image_details["zone"]
+  image_name              = var.machine_image_details["image_name"]
+  image_family            = var.machine_image_details["image_family"]
+  image_storage_locations = [var.machine_image_details["image_storage_locations"]]
+  image_description       = var.machine_image_details["image_description"]
+  communicator            = var.machine_image_details["communicator"]
+  ssh_username            = var.machine_image_details["ssh_username"]
+  disk_type               = var.machine_image_details["disk_type"]
 
 }
 
@@ -75,8 +101,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "./webapp-main.zip"
-    destination = "/tmp/webapp-main.zip"
+    source      = var.webapp_source
+    destination = var.webapp_destination
 
   }
 
@@ -84,7 +110,7 @@ build {
     scripts = [
       "packer/scripts/installproject.sh",
       "packer/scripts/createCSYEService.sh",
-    "packer/scripts/startCSYEService.sh" ]
+    "packer/scripts/startCSYEService.sh"]
 
     environment_vars = [
       "PORT=${var.NODE_PORT}",
