@@ -16,10 +16,10 @@ if [ $? -eq 0 ]; then
         
         # sudo mysql_secure_installation
         mysql_root_password="$DB_PASSWORD"
-
+        mysql_username="$DB_USERNAME"
         # Run MySQL commands to achieve the same steps as mysql_secure_installation
         # changing root password
-        mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$mysql_root_password';"
+        mysql -u root -e "ALTER USER '$mysql_username'@'localhost' IDENTIFIED BY '$mysql_root_password';"
 
         #  Remove anonymous users
         mysql -u root -p"$mysql_root_password" -e "DELETE FROM mysql.user WHERE User='';"
