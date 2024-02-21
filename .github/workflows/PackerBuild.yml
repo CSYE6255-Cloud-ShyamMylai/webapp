@@ -7,7 +7,7 @@ env:
   PORT: ${{secrets.NODE_PORT}} 
   NODE_PORT: ${{secrets.NODE_PORT}} # DECLARED FOR PACKER THE VARIABLE TO BE NODE_PORT to avoid confusion 
   DB_NAME: ${{secrets.DB_NAME}}
-  GOOGLE_AUTH_SERVICE: ${{secrets.AUTH_CREDS}}
+  # GOOGLE_AUTH_SERVICE: ${{secrets.AUTH_CREDS}} # GOOGLE AUTH SERVICE credentials
   DB_DATABASE: ${{secrets.DB_DATABASE}}
 on: 
   pull_request :

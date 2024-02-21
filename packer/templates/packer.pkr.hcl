@@ -58,6 +58,25 @@ variable "webapp_destination" {
   type = string
   default = "/tmp/webapp-main.zip"
 }
+
+variable "preproject_scripts"{
+  type = list(string)
+  default =  [
+      "packer/scripts/installnodejs.sh",
+      "packer/scripts/installmysql.sh",
+      "packer/scripts/installfirewall.sh",
+      "packer/scripts/createCSYE.sh"
+    ]
+}
+
+variable "postproject_scripts"{
+  type = list(string)
+  default =  [
+      "packer/scripts/installproject.sh",
+      "packer/scripts/createCSYEService.sh",
+      "packer/scripts/startCSYEService.sh"
+    ]
+}
 packer {
   required_plugins {
     googlecompute = {
@@ -85,12 +104,7 @@ source "googlecompute" "machineimage" {
 build {
   sources = ["source.googlecompute.machineimage"]
   provisioner "shell" {
-    scripts = [
-      "packer/scripts/installnodejs.sh",
-      "packer/scripts/installmysql.sh",
-      "packer/scripts/installfirewall.sh",
-      "packer/scripts/createCSYE.sh"
-    ]
+    scripts = var.preproject_scripts
     environment_vars = [
       "DB_PASSWORD=${var.DB_PASSWORD}",
       "DB_USERNAME=${var.DB_USERNAME}",
@@ -107,10 +121,7 @@ build {
   }
 
   provisioner "shell" {
-    scripts = [
-      "packer/scripts/installproject.sh",
-      "packer/scripts/createCSYEService.sh",
-    "packer/scripts/startCSYEService.sh"]
+    scripts = var.postproject_scripts
 
     environment_vars = [
       "PORT=${var.NODE_PORT}",
