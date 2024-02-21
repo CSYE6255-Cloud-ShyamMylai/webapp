@@ -13,7 +13,7 @@ After=network.target
 Environment=PORT=$PORT
 Environment=DB_USERNAME=$DB_USERNAME
 Environment=DB_PASSWORD=$DB_PASSWORD
-Environment=DB_HOSTNAME=$DB_HOST
+Environment=DB_HOST=$DB_HOST
 Type=simple
 User=csye6225
 Group=csye6225

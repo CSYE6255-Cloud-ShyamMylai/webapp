@@ -42,6 +42,17 @@ jobs:
 
       - name: Setting up zip for the packer 
         run: zip -r webapp-main.zip ./*
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.AUTH_CREDS }}'
+  
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+  
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
       
       - name: packer downloading the binaries for the required provided 
         run:  packer init packer/templates/packer.pkr.hcl 
