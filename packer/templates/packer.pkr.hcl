@@ -60,8 +60,8 @@ variable "machine_image_details" {
     disk_type               = "pd-standard"*/
   default = {
     project_id              = env("GOOGLE_PROJECT_ID")
-    source_image_family     = env("SOURCE_IMAGE_FAMILY")
-    zone                    = env("IMAGE_ZONE")
+    source_image_family     = "centos-stream-8"
+    zone                    = "us-east1-b"
     image_name              = env("IMAGE_NAME")
     image_family            = env("IMAGE_FAMILY")
     image_storage_locations = env("IMAGE_STORAGE_LOCATIONS")
