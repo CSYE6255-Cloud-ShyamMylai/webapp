@@ -50,32 +50,32 @@ variable "machine_image_details" {
 }
 
 variable "webapp_source" {
-  type = string
+  type    = string
   default = "./webapp-main.zip"
 }
 
 variable "webapp_destination" {
-  type = string
+  type    = string
   default = "/tmp/webapp-main.zip"
 }
 
-variable "preproject_scripts"{
+variable "preproject_scripts" {
   type = list(string)
-  default =  [
-      "packer/scripts/installnodejs.sh",
-      "packer/scripts/installmysql.sh",
-      "packer/scripts/installfirewall.sh",
-      "packer/scripts/createCSYE.sh"
-    ]
+  default = [
+    "packer/scripts/installnodejs.sh",
+    "packer/scripts/installmysql.sh",
+    "packer/scripts/installfirewall.sh",
+    "packer/scripts/createCSYE.sh"
+  ]
 }
 
-variable "postproject_scripts"{
+variable "postproject_scripts" {
   type = list(string)
-  default =  [
-      "packer/scripts/installproject.sh",
-      "packer/scripts/createCSYEService.sh",
-      "packer/scripts/startCSYEService.sh"
-    ]
+  default = [
+    "packer/scripts/installproject.sh",
+    "packer/scripts/createCSYEService.sh",
+    "packer/scripts/startCSYEService.sh"
+  ]
 }
 packer {
   required_plugins {
