@@ -1,7 +1,7 @@
 name: Tester for Packer
 run-name: initalize packer and applying infra
 env: 
-  GOOGLE_PROJECT_ID: ${{secrets.GOOGLE_PROJECT_ID}}
+  GOOGLE_PROJECT_ID: ${{secrets.GOOGLE_PROJECT_ID}} #required for validation 
 on: 
     pull_request :
       types: 
@@ -18,7 +18,7 @@ jobs:
            with:
             version: 1.10.1
 
-         - name : creating temp zip for packer
+         - name : creating temp zip for packer # requiered for validation 
            run: zip -r webapp-main.zip ./*
         
 
