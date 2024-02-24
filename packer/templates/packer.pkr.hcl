@@ -109,7 +109,7 @@ packer {
   }
 }
 
-source "googlecompute" "machineimage" 
+source "googlecompute" "machineimage" {
   project_id              = var.machine_image_details["project_id"]
   source_image_family     = var.machine_image_details["source_image_family"]
   credentials_json        = "${var.AUTH_CREDS}"
