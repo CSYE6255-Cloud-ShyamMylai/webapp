@@ -3,7 +3,7 @@ const app = require('../Routes/index')
 const sequelize = require('../config/sequelize.js');
 // Model and MySql config
 const User = require('../models/User.js');
-beforeAll(async () =>{
+beforeAl(async () =>{
     await sequelize.authenticate();
     await User.sync();
 })
