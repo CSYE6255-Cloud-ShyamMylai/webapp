@@ -19,8 +19,10 @@ jobs:
             version: 1.10.1
 
          - name : creating temp zip for packer # requiered for validation 
-           run: zip -r webapp-main.zip ./*
-        
+           run: zip -r webapp-main.zip ./* 
+
+         - name: packer format check 
+           run: packer fmt -check packer/templates/packer.pkr.hcl
 
          - name: packer downloading the binaries for the required provided 
            run:  packer init packer/templates/packer.pkr.hcl 
