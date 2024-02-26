@@ -6,14 +6,14 @@ cat<<EOF >"$output_file"
 [Unit]
 Description=CSYE 6225 App
 ConditionPathExists= /opt/webapp
-After=network.target
+After=network.target google-startup-scripts.service
 
 
 [Service]
-Environment=PORT=$PORT
-Environment=DB_USERNAME=$DB_USERNAME
-Environment=DB_PASSWORD=$DB_PASSWORD
-Environment=DB_HOST=$DB_HOST
+# Environment=PORT=$PORT
+# Environment=DB_USERNAME=$DB_USERNAME
+# Environment=DB_PASSWORD=$DB_PASSWORD
+# Environment=DB_HOST=$DB_HOST
 Type=simple
 User=csye6225
 Group=csye6225

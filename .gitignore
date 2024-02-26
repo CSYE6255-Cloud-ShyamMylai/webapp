@@ -134,7 +134,7 @@ dist
 .DS_STORE
 
 #ignore google auth file
-google_auth_creds.json 
+csye6255-cloudcomp-packer-dev-KEY.json 
 
 #remove temporary zip
 *.zip
