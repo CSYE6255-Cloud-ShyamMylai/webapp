@@ -5,6 +5,7 @@ env:
   DB_PASSWORD: ${{secrets.DB_PASSWORD}}
   DB_HOST : ${{secrets.DB_HOST}}
   PORT: ${{secrets.NODE_PORT}}
+  DB_DATABASE: ${{secrets.DB_DATABASE}}
 on: 
   pull_request :
     types: 
@@ -19,7 +20,7 @@ jobs:
       - name: Setup SQL 
         run:  |
           sudo service mysql start
-          mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_NAME }};" -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }}
+          mysql -e "CREATE DATABASE IF NOT EXISTS ${{ secrets.DB_DATABASE }};" -u${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }}
 
       - uses: actions/checkout@v4
       - name: Installing NodeJS
