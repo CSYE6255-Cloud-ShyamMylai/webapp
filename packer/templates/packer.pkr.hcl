@@ -86,7 +86,7 @@ variable "preproject_scripts" {
   type = list(string)
   default = [
     "packer/scripts/installnodejs.sh",
-    "packer/scripts/installmysql.sh",
+    // "packer/scripts/installmysql.sh",
     "packer/scripts/installfirewall.sh",
     "packer/scripts/createCSYE.sh"
   ]
