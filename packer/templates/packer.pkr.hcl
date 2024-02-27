@@ -58,7 +58,7 @@ variable "machine_image_details" {
     communicator            = "ssh"
     ssh_username            = "centos-communicator"
     disk_type               = "pd-standard"*/
-  default = {
+  default =   {
     project_id              = env("GOOGLE_PROJECT_ID")
     source_image_family     = "centos-stream-8"
     zone                    = "us-east1-b"
