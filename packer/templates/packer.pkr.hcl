@@ -87,7 +87,7 @@ variable "preproject_scripts" {
   default = [
     "packer/scripts/installnodejs.sh",
     // "packer/scripts/installmysql.sh",
-    "packer/scripts/installfirewall.sh",
+    // "packer/scripts/installfirewall.sh",
     "packer/scripts/createCSYE.sh"
   ]
 }
@@ -128,13 +128,13 @@ build {
   sources = ["source.googlecompute.machineimage"]
   provisioner "shell" {
     scripts = var.preproject_scripts
-    environment_vars = [
-      "DB_PASSWORD=${var.DB_PASSWORD}",
-      "DB_USERNAME=${var.DB_USERNAME}",
-      "DB_DATABASE=${var.DB_DATABASE}",
-      "DB_HOST=${var.DB_HOST}",
-      "PORT=${var.NODE_PORT}"
-    ]
+    // environment_vars = [
+    //   "DB_PASSWORD=${var.DB_PASSWORD}",
+    //   "DB_USERNAME=${var.DB_USERNAME}",
+    //   "DB_DATABASE=${var.DB_DATABASE}",
+    //   "DB_HOST=${var.DB_HOST}",
+    //   "PORT=${var.NODE_PORT}"
+    // ]
   }
 
   provisioner "file" {
@@ -146,12 +146,12 @@ build {
   provisioner "shell" {
     scripts = var.postproject_scripts
 
-    environment_vars = [
-      "PORT=${var.NODE_PORT}",
-      "DB_PASSWORD=${var.DB_PASSWORD}",
-      "DB_USERNAME=${var.DB_USERNAME}",
-      "DB_DATABASE=${var.DB_DATABASE}",
-      "DB_HOST=${var.DB_HOST}",
-    ]
+    // environment_vars = [
+    //   "PORT=${var.NODE_PORT}",
+    //   "DB_PASSWORD=${var.DB_PASSWORD}",
+    //   "DB_USERNAME=${var.DB_USERNAME}",
+    //   "DB_DATABASE=${var.DB_DATABASE}",
+    //   "DB_HOST=${var.DB_HOST}",
+    // ]
   }
 }
