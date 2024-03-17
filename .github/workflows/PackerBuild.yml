@@ -48,7 +48,7 @@ jobs:
           version: 1.10.1
 
       - name: Setting up zip for the packer 
-        run: zip -r webapp-main.zip ./*
+        run:  zip -r webapp-main.zip ./*  -x 'node_modules/*'; 
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
