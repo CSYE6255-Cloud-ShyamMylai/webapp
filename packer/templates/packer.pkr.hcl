@@ -31,7 +31,7 @@ variable "AUTH_CREDS" {
   type        = string
   description = "The JSON credentials for the service account"
   default     = env("GOOGLE_AUTH_SERVICE")
-}
+  }
 
 variable "machine_image_details" {
   type = object({
@@ -48,7 +48,7 @@ variable "machine_image_details" {
   })
 
   /*
-      project_id              = env("GOOGLE_PROJECT_ID")
+    project_id              = env("GOOGLE_PROJECT_ID")
     source_image_family     = "centos-stream-8"
     zone                    = "us-east1-b"
     image_name              = "csye6255packer-dev-{{timestamp}}"
@@ -59,16 +59,16 @@ variable "machine_image_details" {
     ssh_username            = "centos-communicator"
     disk_type               = "pd-standard"*/
   default = {
-    project_id              = env("GOOGLE_PROJECT_ID")
-    source_image_family     = "centos-stream-8"
-    zone                    = "us-east1-b"
-    image_name              = env("IMAGE_NAME")
-    image_family            = env("IMAGE_FAMILY")
-    image_storage_locations = env("IMAGE_STORAGE_LOCATIONS")
-    image_description       = "This is a custom image for CSYE6255 Cloud Computing"
-    communicator            = "ssh"
-    ssh_username            = "centos-communicator"
-    disk_type               = env("DISK_TYPE")
+  project_id              = env("GOOGLE_PROJECT_ID")
+  source_image_family     = "centos-stream-8"
+  zone                    = "us-east1-b"
+  image_name              = env("IMAGE_NAME")
+  image_family            = env("IMAGE_FAMILY")
+  image_storage_locations = env("IMAGE_STORAGE_LOCATIONS")
+  image_description       = "This is a custom image for CSYE6255 Cloud Computing"
+  communicator            = "ssh"
+  ssh_username            = "centos-communicator"
+  disk_type               = env("DISK_TYPE")
   }
 }
 
@@ -88,7 +88,8 @@ variable "preproject_scripts" {
     "packer/scripts/installnodejs.sh",
     // "packer/scripts/installmysql.sh",
     // "packer/scripts/installfirewall.sh",
-    "packer/scripts/createCSYE.sh"
+    "packer/scripts/createCSYE.sh",
+    "packer/scripts/installConfigureOps.sh"
   ]
 }
 
