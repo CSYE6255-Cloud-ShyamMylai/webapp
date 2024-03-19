@@ -63,6 +63,15 @@ app.put('/self', [(req, res, next) => {
     //inline check for the body before dbCheck and authCheck 
     const { password, first_name, last_name, username, ...anythingelse } = req.body;
     if (username != undefined || (!password && !first_name && !last_name) || Object.keys(req.query).length != 0 || Object.keys(anythingelse).length != 0  || req.get('content-type') != 'application/json'){
+        logger.log({
+            level: 'error',
+            message: `Failed due to invalid request body or headers check the body for the put request`,
+            metadata: {
+                method: req.method,
+                path: req.baseUrl + req.path,
+                status: 400
+            }
+        })
         return res.status(400).send();
     }
     next();
