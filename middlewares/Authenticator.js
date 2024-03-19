@@ -2,15 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt')
 const logger = require('../config/logger.js');
 const checkAuth = async (req, res, next) => {
-    logger.log({
-        level: 'info',
-        message: `Entering Authenticator.js`,
-        metadata: {
-            method: req.method,
-            path: req.baseUrl + req.path,
-            status: 200
-        }
-    })
+    logger.debug(`Entering Authenticator.js`, {method: req.method, path: req.baseUrl + req.path, status: 200})
     try {
         const credentials = req.headers.authorization.split(' ')[1];
         const [username, password] = Buffer.from(credentials, 'base64').toString().split(":");
@@ -20,42 +12,18 @@ const checkAuth = async (req, res, next) => {
             }
         })
         if (!response) {
-            logger.log({
-                level: 'error',
-                message: `User not found for user ${username} in the database`,
-                metadata: {
-                    method: req.method,
-                    path: req.baseUrl + req.path,
-                    status: 401
-                }
-            })
+            logger.warn(`User not found for user ${username} in the database`, {method: req.method, path: req.baseUrl + req.path, status: 401})
             return res.status(401).send();
         }
         const validCreds = await bcrypt.compare(password, response.password);
         if (validCreds) {
             // return res.status(201).send()s; 
             req.username = username
-            logger.log({
-                level: 'info',
-                message: `Valid credentials for user ${username}`,
-                metadata: {
-                    method: req.method,
-                    path: req.baseUrl + req.path,
-                    status: 200
-                }
-            })
+            logger.info(`Valid credentials for user ${username}`, {method: req.method, path: req.baseUrl + req.path, status: 200});
             next();
         }
         else {
-            logger.log({
-                level: 'error',
-                message: `Invalid credentials for user ${username}`,
-                metadata: {
-                    method: req.method,
-                    path: req.baseUrl + req.path,
-                    status: 401
-                }
-            })
+            logger.warn(`Invalid credentials for user ${username}`, {method: req.method, path: req.baseUrl + req.path, status: 401});
             return res.status(401).send();
         
         }
@@ -63,6 +31,7 @@ const checkAuth = async (req, res, next) => {
     }
     catch (err) {
         console.error("Error",err);
+        logger.error(`Error in Authenticator.js , processed a request which can break server`, {method: req.method, path: req.baseUrl + req.path, status: 401, error: err});
         res.status(401).send();
     }
 

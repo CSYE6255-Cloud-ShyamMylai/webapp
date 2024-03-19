@@ -6,19 +6,11 @@ const logger = require('../config/logger');
 const dbCheck = async (req,res,next)=>{
     try{
         await sequelize.authenticate();
-        logger.log({
-            level: 'debug',
-            message: `Database Connection Check`})
+        logger.debug(`Database Connection Check`);
         next();
     }
     catch(err){
-        logger.log({
-            level: 'error',
-            message: `Database Connection Failed (dbCheck.js)`,
-            metadata: {
-                error: err
-            }
-        })
+        logger.error(`Database Connection Failed (dbCheck.js)` , {method: req.method, path: req.baseUrl + req.path, status: 503, error: err});
         return res.status(503).send();
     }
 
