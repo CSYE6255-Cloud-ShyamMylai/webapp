@@ -2,7 +2,7 @@ const winston = require("winston");
 
 const MESSAGE = Symbol.for("message");
 
-const replaceNewlinesWithCarriageReturns = format((info, opts) => {
+const replaceNewlinesWithCarriageReturns = winston.format((info, opts) => {
   info[MESSAGE] = info[MESSAGE].replace(/\n/g, "\r");
   return info;
 });
