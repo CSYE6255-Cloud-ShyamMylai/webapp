@@ -37,6 +37,7 @@ logging:
 EOF
 
 
+
 echo configure op agent 
 sudo systemctl restart google-cloud-ops-agent
 sudo systemctl status google-cloud-ops-agent
