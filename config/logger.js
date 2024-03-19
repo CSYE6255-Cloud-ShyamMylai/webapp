@@ -3,6 +3,9 @@ const winston = require("winston");
 const MESSAGE = Symbol.for("message");
 
 const replaceNewlinesWithCarriageReturns = winston.format((info, opts) => {
+  if(info[MESSAGE] === undefined) {
+    return info;
+  }
   info[MESSAGE] = info[MESSAGE].replace(/\n/g, "\r");
   return info;
 });
