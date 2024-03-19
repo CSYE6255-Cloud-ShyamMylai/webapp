@@ -51,7 +51,7 @@ app.use((req, res) => {
             // const dbAdd = await User.sync({force:true});
             logger.log({
                 level: 'info',
-                message: `Health \n Check \n Passed`,
+                message: `Health Check Passed`,
                 metadata: {
                     method: req.method,
                     path: req.baseUrl + req.path,
