@@ -12,7 +12,8 @@ sudo chown csye6225:csye6225 /var/log/webapp/webapplogs.log
 # ls -al /etc/google-cloud-ops-agent/
 # ops_agent_file_path="/etc/google-cloud-ops-agent/config.yaml"
 
-sudo cat <<EOF | sudo tee /etc/google-cloud-ops-agent/config.yaml
+# sudo cat <<EOF | sudo tee /etc/google-cloud-ops-agent/config.yaml
+sudo cat <<EOF | sudo tee config.yaml
 logging:
   receivers:
     my-app-receiver:
@@ -37,7 +38,7 @@ logging:
         processors: [my-app-processor,severity-processor]
 EOF
 
-
+sudo mv ./config.yaml /etc/google-cloud-ops-agent/config.yaml
 
 echo configure op agent 
 sudo systemctl restart google-cloud-ops-agent
