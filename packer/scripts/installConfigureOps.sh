@@ -38,7 +38,7 @@ logging:
         processors: [my-app-processor,severity-processor]
 EOF
 
-sudo mv ./config.yaml /etc/google-cloud-ops-agent/config.yaml
+sudo mv ./config.yaml /etc/google-cloud-ops-agent/
 
 echo configure op agent 
 sudo systemctl restart google-cloud-ops-agent
