@@ -7,6 +7,7 @@ const sequelize = require('./config/sequelize.js');
 // Model and MySql config
 const User = require('./models/User.js');
 const logger = require('./config/logger.js');
+const process = require('node:process');
 // Start the server
 app.listen(port, async () => {
     console.log(`Server running on port ${port}`);
@@ -29,3 +30,7 @@ app.use(express.urlencoded({ extended: true }))
 
 
 app.use(router);
+process.on('uncaughtExceptionMonitor', (err, origin) => {
+    logger.log({level: "error",message: "Uncaught Exception",metadata: {error: err, origin: origin}});
+    process.exit(1);
+});
