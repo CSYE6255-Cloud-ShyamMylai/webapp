@@ -5,8 +5,8 @@ sudo bash add-google-cloud-ops-agent-repo.sh --also-install
 sudo systemctl status google-cloud-ops-agent"*"   
 sudo mkdir /var/log/webapp
 sudo touch /var/log/webapp/webapplogs.log 
-sudo chmod a+w /var/log/webapp/webapplogs.log
 sudo chown csye6225:csye6225 /var/log/webapp/webapplogs.log
+sudo chmod 664 /var/log/webapp/webapplogs.log
 
 # sudo systemctl stop google-cloud-ops-agent
 # ls -al /etc/google-cloud-ops-agent/

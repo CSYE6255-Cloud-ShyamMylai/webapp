@@ -7,21 +7,16 @@ const sequelize = require('./config/sequelize.js');
 // Model and MySql config
 const User = require('./models/User.js');
 const logger = require('./config/logger.js');
-const process = require('node:process');
 // Start the server
 app.listen(port, async () => {
-    console.log(`Server running on port ${port}`);
-    logger.log({level: "debug",message: "Listening to the port",metadata: {port: port}});
+    logger.debug(`Listening to the port ${port}`, {port: port});
     try {
         await sequelize.authenticate();
-        console.log('Connection Established');
         await User.sync();
-        console.log('Database Synced');
-        logger.log({level: "info",message: "Database Synced & Connection Established"});
+        logger.info("Database Synced & Connection Established")
     }
     catch (err) {
-        console.log(err);
-        logger.log({level: "error",message: "Connection Failed",metadata: {error: err}});
+        logger.error("Connection Failed", {error: err});
     }
 });
 // used to parse json from body if the request has body we need this 
@@ -30,7 +25,8 @@ app.use(express.urlencoded({ extended: true }))
 
 
 app.use(router);
+
 process.on('uncaughtExceptionMonitor', (err, origin) => {
-    logger.log({level: "error",message: "Uncaught Exception",metadata: {error: err, origin: origin}});
+    logger.error("Uncaught Exception", {error: err, origin: origin});
     process.exit(1);
 });
