@@ -146,11 +146,11 @@ app.post('/', [
                 password: password,
             });
             if (process.env.NODE_ENV !== "test") {
-                const topicExists = await checkTopicExists('verify_email');
-                if (!topicExists) {
-                    logger.error("Topic doesn't exist", { method: req.method, path: req.baseUrl + req.path, status: 400 });
-                    return res.status(400).send();
-                }
+                // const topicExists = await checkTopicExists('verify_email');
+                // if (!topicExists) {
+                //     logger.error("Topic doesn't exist", { method: req.method, path: req.baseUrl + req.path, status: 400 });
+                //     return res.status(400).send();
+                // }
                 const pubRes = await publishMessage('verify_email', {
                     firstName: creationResponse.first_name,
                     lastName: creationResponse.last_name,
@@ -183,11 +183,23 @@ app.post('/', [
         // }
     });
 
-    app.use('/verify', async (req, res) => {
+    app.use('/verify',[
+        (req, res, next) => {
+            if (req._body == true|| Object.keys(req.query).length == 0 ) {
+                logger.warn("Failed due to invalid request body or headers", {method: req.method, path: req.baseUrl + req.path, status: 400});
+                return res.status(400).send();
+            }
+            next();
+        }
+    ] ,async (req, res) => {
         try{
-            let {email, verificationToken} = req.query;
+            let {email, verificationToken,...anythingelse} = req.query;
             if(!email || !verificationToken){
                 logger.warn("Email or token is missing", {method: req.method, path: req.baseUrl + req.path, status: 400});
+                return res.status(400).send();
+            }
+            if(Object.keys(anythingelse).length != 0){
+                logger.warn("Other properties are present but shouldn't be there", {method: req.method, path: req.baseUrl + req.path, status: 400});
                 return res.status(400).send();
             }
             email = email.trim();
@@ -199,7 +211,7 @@ app.post('/', [
             }
             if(user.dataValues.isVerified){
                 logger.warn("User is already verified", { method: req.method, path: req.baseUrl + req.path, status: 400 });
-                return res.status(400).send();
+                return res.status(200).send("User is already verified");
             }
             if(user.dataValues.emailSentTimeStamp == null){
                 logger.warn("Email has not been sent ,mailgun could be at fault", { method: req.method, path: req.baseUrl + req.path, status: 400 });
@@ -210,6 +222,7 @@ app.post('/', [
             const emailSentTimeStamp = new Date(user.dataValues.emailSentTimeStamp);
             const currentTimeStamp = new Date();
             const timeDiff = currentTimeStamp - emailSentTimeStamp;
+    //      compared with 2 minutes
             if (timeDiff > 120000) {
                 logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
                 return res.status(400).send("Token has expired");

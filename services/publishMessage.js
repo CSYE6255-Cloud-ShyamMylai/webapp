@@ -8,8 +8,8 @@ const publishMessage = async (topicName, data, verificationToken) => {
     console.log(`Publishing message to topic ${topicName}`)
     try {
         const messageId = await pubSubClient.topic(topicName).publishMessage({data: dataBuffer, attributes: {verificationToken: verificationToken}});
-        console.log(`Message ${messageId} published.`);
-        logger.info(`Message ${messageId} published.`);
+        console.log(`Message ${messageId} published to topic ${topicName}.`);
+        logger.info(`Message ${messageId} published to topic ${topicName}.`);
         return true;
     } catch (error) {
         console.error(`Received error while publishing: ${error.message}`);
