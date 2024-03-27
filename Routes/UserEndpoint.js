@@ -205,7 +205,7 @@ app.post('/', [
                 logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
                 return res.status(400).send();
             }
-            await User.update({ isVerified: true });
+            await user.update({ isVerified: true });
             logger.info("User has been verified successfully", {method: req.method, path: req.baseUrl + req.path, status: 200});
             return res.status(200).send("User has been verified successfully");
         }
