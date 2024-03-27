@@ -197,10 +197,15 @@ app.post('/', [
                 logger.warn("User doesn't exist", { method: req.method, path: req.baseUrl + req.path, status: 400 });
                 return res.status(400).send();
             }
-            logger.debug('logger timestamp', {data: user.dataValues.account_created})
+            if(user.dataValues.isVerified){
+                logger.warn("User is already verified", { method: req.method, path: req.baseUrl + req.path, status: 400 });
+                return res.status(400).send();
+            }
+            logger.debug('Email Sent Time Stamp',{ data: user.dataValues.emailSentTimeStamp})
             const createdAtTimeStamp = new Date(user.dataValues.account_created);
+            const emailSentTimeStamp = new Date(user.dataValues.emailSentTimeStamp);
             const currentTimeStamp = new Date();
-            const timeDiff = currentTimeStamp - createdAtTimeStamp;
+            const timeDiff = currentTimeStamp - emailSentTimeStamp;
             if (timeDiff > 120000) {
                 logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
                 return res.status(400).send();
