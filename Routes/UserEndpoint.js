@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const dbCheck = require('../middlewares/dbCheck.js');
 const checkAuth = require('../middlewares/Authenticator.js')
 const logger = require('../config/logger.js');
+const [publishMessage, checkTopicExists] = require('../services/publishMessage.js');
 
 app.use(express.json())
 app.get('/self', [(req, res, next) => {
@@ -23,6 +24,10 @@ app.get('/self', [(req, res, next) => {
                 username: req.username
             }
         })
+        if(process.env.NODE_ENV !== "test" && response.dataValues.isVerified == false){
+            logger.warn("User is not verified", {method: req.method, path: req.baseUrl + req.path, status: 403});
+            return res.status(403).send();
+        }
         // res.setHeader('Content-Type', 'application/json');
         res.setHeader('Accept', 'application/json');
         logger.info(`User with username ${req.username} has been fetched`, {method: req.method, path: req.baseUrl + req.path, status: 200});
@@ -48,6 +53,10 @@ app.put('/self', [(req, res, next) => {
         const { password, first_name, last_name, username, ...anythingelse } = req.body;
         const userForUpdation = await User.findOne({ where: { username: req.username } });
         // const validCreds = await bcrypt.compare(password, userForUpdation.password);
+        if(process.env.NODE_ENV !== "test" && !userForUpdation.dataValues.isVerified){
+            logger.warn("User is not verified", {method: req.method, path: req.baseUrl + req.path, status: 403});
+            return res.status(403).send();
+        }
         if(password){
             const hashedPassword = await bcrypt.hash(password,10);
 
@@ -136,6 +145,23 @@ app.post('/', [
                 username: username,
                 password: password,
             });
+            if (process.env.NODE_ENV !== "test") {
+                const topicExists = await checkTopicExists('verify_email');
+                if (!topicExists) {
+                    logger.error("Topic doesn't exist", { method: req.method, path: req.baseUrl + req.path, status: 400 });
+                    return res.status(400).send();
+                }
+                const pubRes = await publishMessage('verify_email', {
+                    firstName: creationResponse.first_name,
+                    lastName: creationResponse.last_name,
+                    email: creationResponse.username,
+                }, creationResponse.dataValues.verificationToken);
+                if (!pubRes) {
+                    logger.error("Failed to publish message", { method: req.method, path: req.baseUrl + req.path, status: 400 });
+                    return res.status(400).send();
+                }
+            }
+
             logger.info(`User with username ${username} has been created`, {method: req.method, path: req.baseUrl + req.path, status: 201});
             // res.setHeader('Content-Type', 'application/json');
             res.setHeader('Accept', 'application/json');
@@ -156,6 +182,39 @@ app.post('/', [
         // }
         // }
     });
+
+    app.use('/verify', async (req, res) => {
+        try{
+            let {email, verificationToken} = req.query;
+            if(!email || !verificationToken){
+                logger.warn("Email or token is missing", {method: req.method, path: req.baseUrl + req.path, status: 400});
+                return res.status(400).send();
+            }
+            email = email.trim();
+            verificationToken = verificationToken.trim();
+            const user = await User.findOne({ where: { username: email ,verificationToken:verificationToken} });
+            if (!user) {
+                logger.warn("User doesn't exist", { method: req.method, path: req.baseUrl + req.path, status: 400 });
+                return res.status(400).send();
+            }
+            logger.debug('logger timestamp', {data: user.dataValues.account_created})
+            const createdAtTimeStamp = new Date(user.dataValues.account_created);
+            const currentTimeStamp = new Date();
+            const timeDiff = currentTimeStamp - createdAtTimeStamp;
+            if (timeDiff > 120000) {
+                logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
+                return res.status(400).send();
+            }
+            await User.update({ isVerified: true });
+            logger.info("User has been verified successfully", {method: req.method, path: req.baseUrl + req.path, status: 200});
+            return res.status(200).send("User has been verified successfully");
+        }
+        catch(err){
+            logger.error("Error in verifying the user", {method: req.method, path: req.baseUrl + req.path, status: 400, error: err});
+            return res.status(400).send();
+        }
+    
+    })
 
 app.use((req, res) => {
     const allMethods = ["GET", 'PUT', 'POST']

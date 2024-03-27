@@ -2,6 +2,7 @@
 const { Sequelize, DataTypes, UUIDV1 } = require('sequelize');
 const bcrypt = require('bcrypt');
 const sequelize = require('../config/sequelize.js');
+const sequelizeTokenify = require('sequelize-tokenify');
 
 const User = sequelize.define('User', {
     id: {
@@ -33,6 +34,14 @@ const User = sequelize.define('User', {
         validate: {
             isEmail: true
         }
+    },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    verificationToken: {
+        type: DataTypes.STRING,
+        unique: true
     }
 },
     {
@@ -40,6 +49,12 @@ const User = sequelize.define('User', {
         updatedAt: 'account_updated',
         createdAt: 'account_created'
     })
+
+sequelizeTokenify.tokenify(User, {
+    field: 'verificationToken',
+    length: 16,
+    charset:'hex'
+});
 
 User.beforeCreate(async (user,options) =>{
     const hashedPassword = await bcrypt.hash(user.password,10);
