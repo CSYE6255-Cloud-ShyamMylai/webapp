@@ -3,6 +3,7 @@ const pubSubClient = new PubSub();
 const logger = require('../config/logger.js');
 
 const publishMessage = async (topicName, data, verificationToken) => {
+    data.verificationToken = verificationToken;
     const dataBuffer = Buffer.from(JSON.stringify(data));
     console.log(`Publishing message to topic ${topicName}`)
     try {
