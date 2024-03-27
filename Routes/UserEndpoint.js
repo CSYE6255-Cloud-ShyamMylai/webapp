@@ -225,7 +225,7 @@ app.post('/', [
     //      compared with 2 minutes
             if (timeDiff > 120000) {
                 logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
-                return res.status(400).send("Token has expired");
+                return res.status(403).send("Token has expired");
             }
             await user.update({ isVerified: true });
             logger.info("User has been verified successfully", {method: req.method, path: req.baseUrl + req.path, status: 200});
