@@ -19,14 +19,14 @@ app.get('/self', [(req, res, next) => {
 }, dbCheck, checkAuth], async (req, res) => {
     try {
         const response = await User.findOne({
-            attributes: ['first_name', 'last_name', 'username', 'id', 'account_created', 'account_updated'],
+            attributes: ['first_name', 'last_name', 'username', 'id', 'account_created', 'account_updated','isVerified'],
             where: {
                 username: req.username
             }
         })
         if(process.env.NODE_ENV !== "test" && response.dataValues.isVerified == false){
             logger.warn("User is not verified", {method: req.method, path: req.baseUrl + req.path, status: 403});
-            return res.status(403).send();
+            return res.status(401).send();
         }
         // res.setHeader('Content-Type', 'application/json');
         res.setHeader('Accept', 'application/json');
@@ -55,7 +55,7 @@ app.put('/self', [(req, res, next) => {
         // const validCreds = await bcrypt.compare(password, userForUpdation.password);
         if(process.env.NODE_ENV !== "test" && !userForUpdation.dataValues.isVerified){
             logger.warn("User is not verified", {method: req.method, path: req.baseUrl + req.path, status: 403});
-            return res.status(403).send();
+            return res.status(401).send();
         }
         if(password){
             const hashedPassword = await bcrypt.hash(password,10);
