@@ -201,6 +201,10 @@ app.post('/', [
                 logger.warn("User is already verified", { method: req.method, path: req.baseUrl + req.path, status: 400 });
                 return res.status(400).send();
             }
+            if(user.dataValues.emailSentTimeStamp == null){
+                logger.warn("Email has not been sent ,mailgun could be at fault", { method: req.method, path: req.baseUrl + req.path, status: 400 });
+                return res.status(400).send("Email has not been sent yet");
+            }
             logger.debug('Email Sent Time Stamp',{ data: user.dataValues.emailSentTimeStamp})
             const createdAtTimeStamp = new Date(user.dataValues.account_created);
             const emailSentTimeStamp = new Date(user.dataValues.emailSentTimeStamp);
@@ -208,7 +212,7 @@ app.post('/', [
             const timeDiff = currentTimeStamp - emailSentTimeStamp;
             if (timeDiff > 120000) {
                 logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
-                return res.status(400).send();
+                return res.status(400).send("Token has expired");
             }
             await user.update({ isVerified: true });
             logger.info("User has been verified successfully", {method: req.method, path: req.baseUrl + req.path, status: 200});
