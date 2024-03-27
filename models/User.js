@@ -42,7 +42,12 @@ const User = sequelize.define('User', {
     verificationToken: {
         type: DataTypes.STRING,
         unique: true
-    }
+    },
+    emailSentTimeStamp: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null
+    },
 },
     {
         timestamps: true,
