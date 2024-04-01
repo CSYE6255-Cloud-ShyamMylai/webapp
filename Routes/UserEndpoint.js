@@ -26,7 +26,7 @@ app.get('/self', [(req, res, next) => {
         })
         if(process.env.NODE_ENV !== "test" && response.dataValues.isVerified == false){
             logger.warn("User is not verified", {method: req.method, path: req.baseUrl + req.path, status: 403});
-            return res.status(401).send();
+            return res.status(403).send();
         }
         // res.setHeader('Content-Type', 'application/json');
         res.setHeader('Accept', 'application/json');
@@ -55,7 +55,7 @@ app.put('/self', [(req, res, next) => {
         // const validCreds = await bcrypt.compare(password, userForUpdation.password);
         if(process.env.NODE_ENV !== "test" && !userForUpdation.dataValues.isVerified){
             logger.warn("User is not verified", {method: req.method, path: req.baseUrl + req.path, status: 403});
-            return res.status(401).send();
+            return res.status(403).send();
         }
         if(password){
             const hashedPassword = await bcrypt.hash(password,10);
@@ -220,14 +220,15 @@ app.post('/', [
             logger.debug('Email Sent Time Stamp',{ data: user.dataValues.emailSentTimeStamp})
             const createdAtTimeStamp = new Date(user.dataValues.account_created);
             const emailSentTimeStamp = new Date(user.dataValues.emailSentTimeStamp);
+            const expiryTimeStamp = new Date(user.dataValues.expiryTimeStamp);
             const currentTimeStamp = new Date();
-            const timeDiff = currentTimeStamp - emailSentTimeStamp;
+            const timeDiff = expiryTimeStamp - emailSentTimeStamp;
     //      compared with 2 minutes
             if (timeDiff > 120000) {
                 logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
                 return res.status(403).send("Token has expired");
             }
-            await user.update({ isVerified: true });
+            await user.update({ isVerified: true,expiryTimeStamp:null });
             logger.info("User has been verified successfully", {method: req.method, path: req.baseUrl + req.path, status: 200});
             return res.status(200).send("User has been verified successfully");
         }
