@@ -222,7 +222,7 @@ app.post('/', [
             const emailSentTimeStamp = new Date(user.dataValues.emailSentTimeStamp);
             const expiryTimeStamp = new Date(user.dataValues.expiryTimeStamp);
             const currentTimeStamp = new Date();
-            const timeDiff = expiryTimeStamp - emailSentTimeStamp;
+            const timeDiff = currentTimeStamp - emailSentTimeStamp;
     //      compared with 2 minutes
             if (timeDiff > 120000) {
                 logger.warn("Token has expired", { method: req.method, path: req.baseUrl + req.path, status: 400 });
