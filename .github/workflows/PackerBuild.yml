@@ -70,5 +70,33 @@ jobs:
       - name: Build the packer image
         run: packer build packer/templates/packer.pkr.hcl
       
+      - name: create a new image template 
+        run: |
+          sudo apt install jq -y
+          image_id=$(cat packer_manifest.json | jq -r '.builds[0].artifact_id')
+          timestamp=$(date +%s)
+          gcloud compute instance-templates create cli-template-$timestamp \
+          --instance-template-region=us-central1 --machine-type=e2-medium  \
+          --image=$image_id --network=vpc-network-dev-assignment-05 --subnet=webapp --region=us-central1  --boot-disk-type=pd-standard \
+          --metadata=startup-script="#! /bin/bash
+           if [ -e "/opt/webapp/.env" ]; then
+                echo \"File already exists\"
+            else
+                echo \"DB_HOST=10.122.181.2\" >> /opt/webapp/.env
+                echo \"DB_USERNAME=webapp\">>/opt/webapp/.env
+                echo \"DB_PASSWORD=xbzAbw\">>/opt/webapp/.env
+                echo \"DB_DATABASE=webapp\">>/opt/webapp/.env
+                echo \"PORT=3500\">>/opt/webapp/.env
+            fi" --network-tier=STANDARD --service-account=serviceaccount-2024-for-vm@cloud-computing-dev-csye6225.iam.gserviceaccount.com --scopes=logging-write,monitoring-write,pubsub,cloud-platform \
+          --tags=csye6225  --region=us-central1  \
+          --boot-disk-kms-keyring=projects/cloud-computing-dev-csye6225/locations/us-central1/keyRings/key-ring-csye6225-bf3d59d9 \
+          --boot-disk-kms-key=projects/cloud-computing-dev-csye6225/locations/us-central1/keyRings/key-ring-csye6225-bf3d59d9/cryptoKeys/vm-instance-ead4c1f0
+          
+
+      - name: remove packer_manifest 
+        run: rm -rf packer_manifest.json
+
+
+      
       - name: remove the zip file 
         run: rm -rf webapp-main.zip
