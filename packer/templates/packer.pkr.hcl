@@ -155,4 +155,8 @@ build {
     //   "DB_HOST=${var.DB_HOST}",
     // ]
   }
+  post-processor "manifest" {
+    output     = "packer_manifest.json"
+    strip_path = true
+  }
 }

@@ -135,7 +135,10 @@ dist
 
 #ignore google auth file
 csye6255-cloudcomp-packer-dev-KEY.json 
+new-packer-editorkey.json
 
+
+#manifest 
 #remove temporary zip
 *.zip
 
