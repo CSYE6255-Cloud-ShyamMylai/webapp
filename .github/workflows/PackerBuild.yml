@@ -111,7 +111,7 @@ jobs:
       - name: polling to check if update is verified 
         id: poll_check_status
         run: | 
-          gcloud compute instance-groups managed wait-until --stable  instance-group-manager-csye6225 --region=$PROJECT_REGION --timeout=600
+          gcloud compute instance-groups managed wait-until --stable  instance-group-manager-csye6225 --region=us-central1 --timeout=300
           env: 
             PROJECT_REGION: ${{secrets.PROJECT_REGION}}
 
