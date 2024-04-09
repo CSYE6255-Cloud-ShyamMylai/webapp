@@ -84,9 +84,9 @@ jobs:
            if [ -e "/opt/webapp/.env" ]; then
                 echo \"File already exists\"
             else
-                echo \"DB_HOST=10.122.181.2\" >> /opt/webapp/.env
+                echo \"DB_HOST=$DB_HOST_TF \" >> /opt/webapp/.env
                 echo \"DB_USERNAME=webapp\">>/opt/webapp/.env
-                echo \"DB_PASSWORD=xbzAbw\">>/opt/webapp/.env
+                echo \"DB_PASSWORD=$DB_PASSWORD_TF \">>/opt/webapp/.env
                 echo \"DB_DATABASE=webapp\">>/opt/webapp/.env
                 echo \"PORT=3500\">>/opt/webapp/.env
             fi" --network-tier=STANDARD --service-account=serviceaccount-2024-for-vm@cloud-computing-dev-csye6225.iam.gserviceaccount.com --scopes=logging-write,monitoring-write,pubsub,cloud-platform \
@@ -97,11 +97,15 @@ jobs:
           gcloud compute instance-groups managed rolling-action start-update  \
           instance-group-manager-csye6225 --version=template=https://www.googleapis.com/compute/v1/projects/cloud-computing-dev-csye6225/regions/us-central1/instanceTemplates/cli-template-$timestamp \
           --region=us-central1 --max-surge=6
+        env: 
+          DB_HOST_TF: ${{secrets.DB_HOST_TF}}
+          DB_PASSWORD_TF: ${{secrets.DB_PASSWORD_TF}}
+
       
       - name: polling to check if update is verified 
         id: poll_check_status
         run: | 
-          gcloud compute instance-groups managed wait-until-stable  instance-group-manager-csye6225 --region=us-central1 
+          gcloud compute instance-groups managed wait-until-stable  instance-group-manager-csye6225 --region=us-central1 --timeout=600
       
       - name: check previous step result 
         if: ${{ steps.poll_check_status.outcome == 'failure' }}
