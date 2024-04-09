@@ -73,6 +73,7 @@ jobs:
       - name: create a new image template 
         run: |
           sudo apt install jq -y
+          cat packer_manifest.json
           image_id=$(cat packer_manifest.json | jq -r '.builds[0].artifact_id')
           timestamp=$(date +%s)
           gcloud compute instance-templates create cli-template-$timestamp \
@@ -91,12 +92,24 @@ jobs:
           --tags=csye6225  --region=us-central1  \
           --boot-disk-kms-keyring=projects/cloud-computing-dev-csye6225/locations/us-central1/keyRings/key-ring-csye6225-bf3d59d9 \
           --boot-disk-kms-key=projects/cloud-computing-dev-csye6225/locations/us-central1/keyRings/key-ring-csye6225-bf3d59d9/cryptoKeys/vm-instance-ead4c1f0
-          
 
+      - name: update instance group with instance template 
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update  \
+          instance-group-manager-csye6225 --version=template=https://www.googleapis.com/compute/v1/projects/cloud-computing-dev-csye6225/regions/us-central1/instanceTemplates/cli-template-$timestamp \
+          --region=us-central1 --max-surge=6
+      
+      - name: polling to check if update is verified 
+        id: poll_check_status
+        run: | 
+          gcloud compute instance-groups managed wait-until instance-group-manager-csye6225 --version-target-reached --region=us-central1 --timeout=300
+      
+      - name: check previous step result 
+        if: ${{ steps.poll_check_status.outcome == 'failure' }}
+        run: exit 1
+    
       - name: remove packer_manifest 
         run: rm -rf packer_manifest.json
 
-
-      
       - name: remove the zip file 
         run: rm -rf webapp-main.zip
