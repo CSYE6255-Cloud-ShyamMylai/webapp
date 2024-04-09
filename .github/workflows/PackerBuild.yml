@@ -111,8 +111,8 @@ jobs:
         id: poll_check_status
         run: | 
           gcloud compute instance-groups managed wait-until --stable  instance-group-manager-csye6225 --region=$PROJECT_REGION --timeout=600
-          env: 
-            PROJECT_REGION: us-central1
+        env: 
+          PROJECT_REGION: ${{secrets.PROJECT_REGION}}
 
       - name: check previous step result 
         if: ${{ steps.poll_check_status.outcome == 'failure' }}
