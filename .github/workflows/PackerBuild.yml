@@ -70,7 +70,7 @@ jobs:
       - name: Build the packer image
         run: packer build packer/templates/packer.pkr.hcl
       
-      - name: create a new image template 
+      - name: create a new image template and update the instance group
         run: |
           sudo apt install jq -y
           cat packer_manifest.json
@@ -85,17 +85,17 @@ jobs:
                 echo \"File already exists\"
             else
                 echo \"DB_HOST=$DB_HOST_TF \" >> /opt/webapp/.env
-                echo \"DB_USERNAME=webapp\">>/opt/webapp/.env
+                echo \"DB_USERNAME=$DB_USERNAME_TF\">>/opt/webapp/.env
                 echo \"DB_PASSWORD=$DB_PASSWORD_TF \">>/opt/webapp/.env
-                echo \"DB_DATABASE=webapp\">>/opt/webapp/.env
-                echo \"PORT=3500\">>/opt/webapp/.env
-            fi" --network-tier=STANDARD --service-account=serviceaccount-2024-for-vm@cloud-computing-dev-csye6225.iam.gserviceaccount.com --scopes=logging-write,monitoring-write,pubsub,cloud-platform \
+                echo \"DB_DATABASE=$DB_DATABASE_TF\">>/opt/webapp/.env
+                echo \"PORT=$NODE_PORT\">>/opt/webapp/.env
+            fi" --network-tier=STANDARD --service-account=$SERVICE_ACCOUNT_EMAIL --scopes=logging-write,monitoring-write,pubsub,cloud-platform \
           --tags=csye6225  --region=$PROJECT_REGION  \
           --boot-disk-kms-keyring=$KEY_RING \
           --boot-disk-kms-key=$VM_INSTANCE_KEY 
 
           gcloud compute instance-groups managed rolling-action start-update  \
-          instance-group-manager-csye6225 --version=template=https://www.googleapis.com/compute/v1/projects/cloud-computing-dev-csye6225/regions/us-central1/instanceTemplates/cli-template-$timestamp \
+          instance-group-manager-csye6225 --version=template=https://www.googleapis.com/compute/v1/projects/$GOOGLE_PROJECT_ID/regions/$PROJECT_REGION/instanceTemplates/cli-template-$timestamp \
           --region=us-central1 --max-surge=6
         env: 
           DB_HOST_TF: ${{secrets.DB_HOST_TF}}
@@ -103,13 +103,18 @@ jobs:
           KEY_RING: ${{secrets.KEY_RING}}
           VM_INSTANCE_KEY: ${{secrets.VM_INSTANCE_KEY}}
           PROJECT_REGION: ${{secrets.PROJECT_REGION}}
+          DB_USERNAME_TF: ${{secrets.DB_USERNAME_TF}}
+          DB_DATABASE_TF: ${{secrets.DB_DATABASE_TF}}
+          SERVICE_ACCOUNT_EMAIL: ${{secrets.SERVICE_ACCOUNT_EMAIL}}
 
       
       - name: polling to check if update is verified 
         id: poll_check_status
         run: | 
-          gcloud compute instance-groups managed wait-until-stable  instance-group-manager-csye6225 --region=us-central1 --timeout=600
-      
+          gcloud compute instance-groups managed wait-until --stable  instance-group-manager-csye6225 --region=$PROJECT_REGION --timeout=600
+          env: 
+            PROJECT_REGION: ${{secrets.PROJECT_REGION}}
+
       - name: check previous step result 
         if: ${{ steps.poll_check_status.outcome == 'failure' }}
         run: exit 1
