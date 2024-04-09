@@ -73,7 +73,6 @@ jobs:
       - name: create a new image template and update the instance group
         run: |
           sudo apt install jq -y
-          cat packer_manifest.json
           image_id=$(cat packer_manifest.json | jq -r '.builds[0].artifact_id')
           timestamp=$(date +%s)
 
@@ -113,7 +112,7 @@ jobs:
         run: | 
           gcloud compute instance-groups managed wait-until --stable  instance-group-manager-csye6225 --region=$PROJECT_REGION --timeout=600
           env: 
-            PROJECT_REGION: ${{secrets.PROJECT_REGION}}
+            PROJECT_REGION: us-central1
 
       - name: check previous step result 
         if: ${{ steps.poll_check_status.outcome == 'failure' }}
