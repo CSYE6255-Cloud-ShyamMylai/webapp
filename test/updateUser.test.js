@@ -8,12 +8,12 @@ const User = require('../models/User.js');
 describe("Updating a user and get the user details to cross verify if it is the same user",()=>{
     test("Updating a user's last name and then get the credentials",async ()=>{
         // console.log(globalUserCredentials)
-        const putResponse = await request(app).put('/v1/user/self/')
+        const putResponse = await request(app).put('/v2/user/self/')
         .auth(globalUserCredentials.username,globalUserCredentials.password)
         .send({first_name:"Testing"})
         .set({'content-type':'application/json'})
         expect(putResponse.statusCode).toBe(204);
-        const getResponse = (await request(app).get('/v1/user/self/')
+        const getResponse = (await request(app).get('/v2/user/self/')
         .auth(globalUserCredentials.username,globalUserCredentials.password)
         .set('Accept','application/json'));
         expect(getResponse.statusCode).toBe(200)
@@ -22,13 +22,13 @@ describe("Updating a user and get the user details to cross verify if it is the 
 
     test("Updating a user's first name and then get the credentials",async ()=>{
         // console.log(globalUserCredentials)
-        const putResponse = await request(app).put('/v1/user/self/')
+        const putResponse = await request(app).put('/v2/user/self/')
         .auth(globalUserCredentials.username,globalUserCredentials.password)
         .send({last_name:"Testing Last Name"})
         .set({'content-type':'application/json'})
         expect(putResponse.statusCode).toBe(204);
 
-        const getResponse = (await request(app).get('/v1/user/self/')
+        const getResponse = (await request(app).get('/v2/user/self/')
         .auth(globalUserCredentials.username,globalUserCredentials.password)
         .set('Accept','application/json'));
         expect(getResponse.statusCode).toBe(200)
@@ -37,13 +37,13 @@ describe("Updating a user and get the user details to cross verify if it is the 
 
     test("Updating a user's password and then get the credentials",async ()=>{
         // console.log(globalUserCredentials)
-        const putResponse = await request(app).put('/v1/user/self/')
+        const putResponse = await request(app).put('/v2/user/self/')
         .auth(globalUserCredentials.username,globalUserCredentials.password)
         .send({password:newpassword})
         .set({'content-type':'application/json'})
         expect(putResponse.statusCode).toBe(204);
 
-        const getResponse = (await request(app).get('/v1/user/self/')
+        const getResponse = (await request(app).get('/v2/user/self/')
         .auth(globalUserCredentials.username,newpassword)
         .set('Accept','application/json'));
         expect(getResponse.statusCode).toBe(200);

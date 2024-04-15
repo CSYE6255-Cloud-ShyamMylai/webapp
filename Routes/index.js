@@ -4,7 +4,7 @@ const createUser = require('./UserEndpoint.js');
 const HealthCheck = require('./HealthCheck.js')
 const logger = require('../config/logger.js');
 app.use('/healthz',HealthCheck);
-app.use('/v1/user',createUser);
+app.use('/v2/user',createUser);
 
 app.use((req,res) => {
     console.log(req.method,req.path)
